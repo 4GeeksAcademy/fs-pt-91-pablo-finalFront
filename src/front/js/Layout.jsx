@@ -10,6 +10,9 @@ import { Footer } from "./component/Footer.jsx";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
 import { Home } from "./pages/Home.jsx";
+import { Error404 } from "./pages/Error404.jsx";
+import { Login } from "./component/Login.jsx";
+import { TodoList } from "./pages/ToDoList.jsx";
 
 
 //create your first component
@@ -26,9 +29,11 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
+                        <Route element={<Login />} path="/login" />
+                        <Route element={<TodoList />} path="/todo-list" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
-                        <Route element={<h1>Not found!</h1>} />
+                        <Route element={<Error404 />} path="*" />
                     </Routes>
                     <Footer />
                 </ScrollToTop>
