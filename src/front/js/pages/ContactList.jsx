@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const ContactList = () => {
     const { store, actions } = useContext(Context);
@@ -16,6 +16,9 @@ export const ContactList = () => {
 
     return(
         <div className="container mt-3">
+            <Link to="/add-contact">
+                <button className="btn btn-primary mb-2">Add contact</button>
+            </Link>
             {store.contacts.length === 0 
             ?
             <p className="text-center">No tienes contactos</p> 
@@ -26,23 +29,23 @@ export const ContactList = () => {
                 const randomImageUrl = `https://randomuser.me/api/portraits/${manOrWoman}/${contact.id}.jpg`
 
                 return (
-                <div key={contact.id} className="card mb-3">
+                <div key={contact.id} className="card bg-secondary mb-3">
                     <div className="row g-0 align-items-center">
-                        <div className="col-md-2 ps-2">
+                        <div className="col-md-2 pe-2">
                             <img src={randomImageUrl} className="img-fluid rounded-circle" alt="..." />
                         </div>
                         <div className="col-md-4">
                             <div className="card-body">
                                 <h5 className="card-title">{contact.name}</h5>
-                                <p className="card-text text-secondary d-flex align-items-center gap-3">
+                                <p className="card-text d-flex align-items-center gap-3">
                                     <i className="fa-solid fa-location-dot"></i> 
                                     {contact.address}
                                 </p>
-                                <p className="card-text text-secondary d-flex align-items-center gap-3">
+                                <p className="card-text d-flex align-items-center gap-3">
                                     <i className="fa-solid fa-phone"></i> 
                                     {contact.phone}
                                 </p>
-                                <p className="card-text text-secondary d-flex align-items-center gap-3">
+                                <p className="card-text d-flex align-items-center gap-3">
                                     <i className="fa-solid fa-envelope"></i> 
                                     {contact.email}
                                 </p>
@@ -50,7 +53,7 @@ export const ContactList = () => {
                         </div>
                         <div className="col-md-6 d-flex justify-content-end px-2 gap-2">
                             <button className="btn" onClick={() => navigate(`edit-contact/${contact.id}`)}><i className="fa-solid fa-pencil"></i></button>
-                            <button className="btn" data-bs-toggle="modal" data-bs-target="#deleteContactModal" onClick={() => handleShowModal(contact)}><i className="fa-solid fa-trash"></i></button>
+                            <button className="btn text-danger" data-bs-toggle="modal" data-bs-target="#deleteContactModal" onClick={() => handleShowModal(contact)}><i className="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
                 </div>
@@ -58,11 +61,13 @@ export const ContactList = () => {
             })
             }
             <div className="modal fade" id="deleteContactModal" tabIndex="-1" aria-labelledby="deleteContactModalLabel" aria-hidden="true">
-                <div className="modal-dialog">
+                <div className="modal-dialog" role="document">
                       <div className="modal-content">
-                          <div className="modal-header">
+                          <div className="modal-header justify-content-between">
                                 <h1 className="modal-title fs-5" id="deleteContactModalLabel">Modal title</h1>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" className="btn-close m-0" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true"></span>
+                                </button>
                           </div>
                           <div className="modal-body">
                             ¿Seguro que quieres eliminar a {<strong>{deleteContact.name}</strong>} de tu lista de contactos? Esta acción es irreversible.

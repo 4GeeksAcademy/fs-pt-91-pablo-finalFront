@@ -5,7 +5,7 @@ import { Context } from "../store/appContext";
 
 export const ContactForm = () => {
 
-  const { state, actions } = useContext(Context)
+  const { actions } = useContext(Context)
   const navigate = useNavigate();
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -42,7 +42,7 @@ export const ContactForm = () => {
     else {
       actions.contactApi.addContact(dataToSend)
     }
-    navigate("/")
+    navigate("/contact-list")
   }
     return (
         <form className="container" action="submit">
@@ -64,7 +64,7 @@ export const ContactForm = () => {
               <input type="text" className="form-control" id="address" placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} />
             </div>
             <button type="submit" className="btn btn-primary w-100" onClick={(event) => handleSubmit(event)}>Save</button>
-            <Link to="/">
+            <Link to="/contact-list">
               {"Go back to contact list"}
             </Link>
         </form>
