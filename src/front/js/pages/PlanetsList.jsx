@@ -2,31 +2,37 @@ import React, { useContext, useEffect, useState } from "react";
 import { Card } from "../component/Card.jsx";
 import { Context } from "../store/appContext.js";
 import { Spinner } from "../component/Spinner.jsx";
+import { Pagination } from "../component/Pagination.jsx";
 
 export const PlanetsList = () => {
     const {store} = useContext(Context)
-        const [isLoading, setIsLoading] = useState(true)
-        useEffect(() => {
-            setIsLoading(store.planets.length === 0);
-        }, [store.planets])
+    const [isLoading, setIsLoading] = useState(true)
+    const [currentPage, setCurrentPage] = useState(1)
+        
+    useEffect(() => {
+        setIsLoading(store.planets.results === undefined);
+    }, [store.planets])
     
-        return (
-            <div className="container-fluid mt-5">
-                {isLoading 
-                ?
-                <Spinner />
-                :
+    return (
+        <div className="container-fluid mt-5">
+            {isLoading 
+            ?
+            <Spinner status="Cargando planetas..."/>
+            :
+            <div className="d-flex flex-column align-items-center gap-5">
                 <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 gap-5 justify-content-center">
-                    {store.planets.map((character) => 
+                    {store.planets.results?.map((character) => 
                         <Card 
-                            key={`planet_${character.uid}`} 
-                            type="planets" 
-                            name={character.name} 
-                            uid={character.uid} 
+                        key={`planet_${character.uid}`} 
+                        type="planets" 
+                        name={character.name} 
+                        uid={character.uid} 
                         />
                     )}
                 </div>
-                }
+                <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} type="planets" />     
             </div>
-        )
+            }
+        </div>
+    )
 }

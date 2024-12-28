@@ -127,7 +127,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						return;
 					}
 					const data = await response.json();
-					setStore({ characters: data.results })
+					setStore({ characters: data })
 				},
 				getPlanets: async (optionalData) => {
 					const uri = `${getStore().baseSwapiUrl}/planets?${optionalData}`;
@@ -137,7 +137,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						return;
 					}
 					const data = await response.json();
-					setStore({ planets: data.results })
+					setStore({ planets: data })
 				},
 				getStarships: async (optionalData) => {
 					const uri = `${getStore().baseSwapiUrl}/starships?${optionalData}`;
@@ -147,7 +147,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						return;
 					}
 					const data = await response.json();
-					setStore({ starships: data.results })
+					setStore({ starships: data })
 				},
 				getDetails: async (extraUrlData) => {
 					const uri = `${getStore().baseSwapiUrl}/${extraUrlData}`;
@@ -158,6 +158,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 					const data = await response.json();
 					return data.result.properties;
+				},
+				clear: (type) => {
+					setStore({ [type]: [] })
 				}
 			},
 			getMessage: async () => {

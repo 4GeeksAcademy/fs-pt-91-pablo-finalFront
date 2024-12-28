@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 export const Card = (props) => {
 
-    const { store, actions } = useContext(Context)
+    const { actions } = useContext(Context)
     const [imageUrl, setImageUrl] = useState("")
 
     useEffect(() => {
