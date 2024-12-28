@@ -5,16 +5,34 @@ import { Link } from "react-router-dom";
 
 export const Card = (props) => {
 
-    const { actions } = useContext(Context)
+    const { store, actions } = useContext(Context)
     const [imageUrl, setImageUrl] = useState("")
+    const [isFavorite, setIsFavorite] = useState(false)
+    const type = props.type === "characters" ? "people" : props.type
+    const extraData = `${type}/${props.uid}`;
 
     useEffect(() => {
-        const extraData = `${props.type}/${props.uid}`;
-        actions.starWarsApi.getImage(extraData).then((data) => {
+        actions.starWarsApi.getImage(`${props.type}/${props.uid}`).then((data) => {
             setImageUrl(data)
         })
-        
+        setIsFavorite(store.favorites.find((val) => val.redirect === extraData))
     }, [])
+
+    const handleSetFavorite = () => {
+      if(isFavorite) {
+        actions.removeFavorite(extraData)
+      }
+      else {
+        actions.setFavorite({redirect: extraData, label: props.name})
+      }
+      setIsFavorite(!isFavorite)
+    }
+
+    useEffect(() => {
+      setIsFavorite(store.favorites.find((val) => val.redirect === extraData))
+      
+    }, [store.favorites])
+
     return (
         <div className="card col p-0">
             <img src={imageUrl} className="card-img-top w-100" alt={`${props.name}'s picture`} />
@@ -24,7 +42,7 @@ export const Card = (props) => {
                 <Link to={`./${props.uid}`}>
                   <button type="button" className="btn btn-primary">Details</button>
                 </Link>
-                <button type="button" className="btn btn-outline-warning"><i className="fa-regular fa-heart"></i></button>
+                <button type="button" className={`btn btn${isFavorite ? "" : '-outline'}-warning`} onClick={handleSetFavorite}><i className="fa-regular fa-heart"></i></button>
               </div>
             </div>
         </div>

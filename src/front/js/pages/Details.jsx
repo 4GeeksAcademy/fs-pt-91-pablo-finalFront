@@ -61,6 +61,7 @@ export const Details = () => {
     const [pilots, setPilots] = useState("")
 
     useEffect(() => {
+        setIsLoading(true)
         if(!isCorrectType(params.type)) {
             navigate("/not-found");
             return;
@@ -99,7 +100,7 @@ export const Details = () => {
             }
             setIsLoading(false)
         })
-    }, [])
+    }, [params])
     return (
     <div className="container mt-5">
         {isLoading

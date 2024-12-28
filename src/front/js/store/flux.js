@@ -18,6 +18,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			characters: [],
 			planets: [],
 			starships: [],
+			favorites: [],
 			baseContactApiUrl: "https://playground.4geeks.com/contact/agendas",
 			baseStarWarsImageUrl: "https://starwars-visualguide.com/assets/img",
 			baseSwapiUrl: "https://www.swapi.tech/api",
@@ -27,6 +28,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
+			},
+			setFavorite: (newFavorite) => {
+				setStore({favorites: [...getStore().favorites, newFavorite]})
+				
+			},
+			removeFavorite: (toRemoveRedirect) => {
+				setStore({favorites: getStore().favorites.filter((favorite) => favorite.redirect !== toRemoveRedirect)})
 			},
 			contactApi: {
 				getContactList: async() => {
