@@ -23,9 +23,9 @@ const injectContext = PassedComponent => {
 
 		useEffect(() => {
 			state.actions.contactApi.getContactList();
-			if(state.store.characters.length === 0) state.actions.starWarsApi.getCharacters();
-			if(state.store.planets.length === 0) state.actions.starWarsApi.getPlanets();
-			if(state.store.starships.length === 0) state.actions.starWarsApi.getStarships();
+			if(state.store.people.length === 0) state.actions.starWarsApi.get("people", "");
+			if(state.store.planets.length === 0) state.actions.starWarsApi.get("planets", "");
+			if(state.store.starships.length === 0) state.actions.starWarsApi.get("starships", "");
 		}, []);
 
 		// The initial value for the context is not null anymore, but the current state of this component,

@@ -83,7 +83,7 @@ export const Details = () => {
         const loadPilots = async (arr) => {
             const pilotsToAdd = [];
             for (const pilot of arr) {
-                await actions.starWarsApi.get(pilot).then((res) => {
+                await actions.starWarsApi.getWithUri(pilot).then((res) => {
                     const newPilot = ` ${res.result.properties.name}`;
                     pilotsToAdd.push(newPilot);
                 })

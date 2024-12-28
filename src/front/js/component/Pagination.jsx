@@ -4,7 +4,7 @@ import { Context } from "../store/appContext.js";
 
 export const Pagination = (props) => {
 
-    const { store, actions } = useContext(Context)
+    const { store, actions } = useContext(Context);
 
     const handlePageChange = (newPage) => {
         actions.starWarsApi.clear(props.type);
@@ -12,19 +12,7 @@ export const Pagination = (props) => {
         const pageNumber = typeof newPage === "string" ? parseInt(newPage.split("page=")[1][0]) : newPage;
         const newUrl = `page=${pageNumber}&limit=10`;
 
-        switch (props.type) {
-            case "characters":
-                actions.starWarsApi.getCharacters(newUrl);
-                break;
-            case "planets":
-                actions.starWarsApi.getPlanets(newUrl);
-                break;
-            case "starships":
-                actions.starWarsApi.getStarships(newUrl);
-                break;
-            default:
-                break;
-        };
+        actions.starWarsApi.get(props.type, newUrl);
         props.setCurrentPage(pageNumber);
     };
 

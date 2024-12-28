@@ -2,7 +2,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			contacts: [],
-			characters: [],
+			people: [],
 			planets: [],
 			starships: [],
 			favorites: [],
@@ -93,7 +93,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			starWarsApi: {
-				get: async(uri) => {
+				getWithUri: async(uri) => {
 					const response = await fetch(uri);
 					if(!response.ok) {
 						console.log("Not found");
@@ -101,6 +101,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 					const data = await response.json();
 					return data;
+				},
+				get: async(type, optionalData) => {
+					const uri = `${getStore().baseSwapiUrl}/${type}?${optionalData}`;
+					const data = await getActions().starWarsApi.getWithUri(uri);
+					setStore({ [type]: data })
 				},
 				getImage: async (extraUrlData) => {
 					const uri = `${getStore().baseStarWarsImageUrl}/${extraUrlData}.jpg`;
@@ -111,44 +116,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 					return response.url;
 				},
-				getCharacters: async (optionalData) => {
-					const uri = `${getStore().baseSwapiUrl}/people?${optionalData}`;
-					const response = await fetch(uri);
-					if(!response.ok) {
-						console.log("Characters not found");
-						return;
-					}
-					const data = await response.json();
-					setStore({ characters: data })
-				},
-				getPlanets: async (optionalData) => {
-					const uri = `${getStore().baseSwapiUrl}/planets?${optionalData}`;
-					const response = await fetch(uri);
-					if(!response.ok) {
-						console.log("Characters not found");
-						return;
-					}
-					const data = await response.json();
-					setStore({ planets: data })
-				},
-				getStarships: async (optionalData) => {
-					const uri = `${getStore().baseSwapiUrl}/starships?${optionalData}`;
-					const response = await fetch(uri);
-					if(!response.ok) {
-						console.log("Characters not found");
-						return;
-					}
-					const data = await response.json();
-					setStore({ starships: data })
-				},
 				getDetails: async (extraUrlData) => {
 					const uri = `${getStore().baseSwapiUrl}/${extraUrlData}`;
-					const response = await fetch(uri);
-					if(!response.ok) {
-						console.log("Character details not found");
-						return;
-					}
-					const data = await response.json();
+					const data = await getActions().starWarsApi.getWithUri(uri);
 					return data.result.properties;
 				},
 				clear: (type) => {
