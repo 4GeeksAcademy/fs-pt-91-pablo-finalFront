@@ -9,9 +9,9 @@ export const Spinner = (props) => {
             </div>
             {props.status}
         </div>
-    )
-}
+    );
+};
 
 Spinner.propTypes = {
     status: PropTypes.string
-}
+};

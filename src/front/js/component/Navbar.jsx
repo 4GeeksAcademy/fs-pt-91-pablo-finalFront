@@ -1,15 +1,15 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import starWarsLogo from "../../img/logo-star-wars.png";
-import { Context } from "../store/appContext";
+import { Context } from "../store/appContext.js";
 
 export const Navbar = () => {
 	const { store, actions } = useContext(Context);
 
 	const handleRemoveFavorite = (toRemoveRedirect) => {
 		actions.removeFavorite(toRemoveRedirect)
-	}
-	
+	};
+
 	return (
 		<nav className="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
 			<div className="container-fluid">
@@ -46,18 +46,18 @@ export const Navbar = () => {
 				</button>
 				<div className="dropdown-menu">
 					{
-						store.favorites.length === 0 
-						?
-						<span className="dropdown-item text-end">You don't have favorites</span>
-						:
-						store.favorites.map((favorite) => 
-							<div key={favorite.redirect} className="dropdown-item text-end d-flex justify-content-between align-items-center">
-								<Link className="dropdown-link" to={`./${favorite.redirect}`}>
-									{favorite.label}
-								</Link>
-								<button className="btn text-danger" onClick={() => handleRemoveFavorite(favorite.redirect)}><i className="fa-solid fa-trash"></i></button>
-							</div>
-						)
+						store.favorites.length === 0
+							?
+							<span className="dropdown-item text-end">You don't have favorites</span>
+							:
+							store.favorites.map((favorite) =>
+								<div key={favorite.redirect} className="dropdown-item text-end d-flex justify-content-between align-items-center">
+									<Link className="dropdown-link" to={`./${favorite.redirect}`}>
+										{favorite.label}
+									</Link>
+									<button className="btn text-danger" onClick={() => handleRemoveFavorite(favorite.redirect)}><i className="fa-solid fa-trash"></i></button>
+								</div>
+							)
 					}
 				</div>
 			</div>

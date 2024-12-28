@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Home } from "./pages/Home.jsx";
@@ -26,24 +25,23 @@ const Layout = () => {
     return (
         <div>
             <BrowserRouter basename={basename}>
-                <ScrollToTop>
-                    <Navbar />
-                    <Routes>
-                        <Route element={<Home />} path="/" />
+                <Navbar />
+                <Routes>
+                    <Route element={<Home />} path="/" />
 
-                        <Route element={<CharactersList />} path="/people" />
-                        <Route element={<PlanetsList />} path="/planets" />
-                        <Route element={<StarshipsList />} path="/starships" />
+                    <Route element={<CharactersList />} path="/people" />
+                    <Route element={<PlanetsList />} path="/planets" />
+                    <Route element={<StarshipsList />} path="/starships" />
 
-                        <Route element={<Details />} path="/:type/:id" />
+                    <Route element={<Details />} path="/:type/:id" />
 
-                        <Route element={<ContactList />} path="/contact-list" />
-                        <Route element={<ContactForm />} path="/add-contact" />
-                        <Route element={<ContactForm />} path="/edit-contact/:id" />
-                        <Route element={<h1>Not found!</h1>} path="*" />
-                    </Routes>
-                    <Footer />
-                </ScrollToTop>
+                    <Route element={<ContactList />} path="/contact-list" />
+                    <Route element={<ContactForm />} path="/add-contact" />
+                    <Route element={<ContactForm />} path="/edit-contact/:id" />
+                    
+                    <Route element={<h1>Not found!</h1>} path="*" />
+                </Routes>
+                <Footer />
             </BrowserRouter>
         </div>
     );

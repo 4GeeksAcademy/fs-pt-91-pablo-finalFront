@@ -1,19 +1,6 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			],
 			contacts: [],
 			characters: [],
 			planets: [],
@@ -25,16 +12,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			slug: "spain-91-pablo"
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
 			setFavorite: (newFavorite) => {
-				setStore({favorites: [...getStore().favorites, newFavorite]})
-				
+				setStore({favorites: [...getStore().favorites, newFavorite]});
 			},
 			removeFavorite: (toRemoveRedirect) => {
-				setStore({favorites: getStore().favorites.filter((favorite) => favorite.redirect !== toRemoveRedirect)})
+				setStore({favorites: getStore().favorites.filter((favorite) => favorite.redirect !== toRemoveRedirect)});
 			},
 			contactApi: {
 				getContactList: async() => {
@@ -45,15 +27,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 						await fetch(uri, {
 							method: 'POST'
 						}).then(async(res) => {
-
 							if(res.ok) {
 								await getActions().contactApi.getContactList();
 							}
 						})
 						return;
 					}
-					const data = await response.json()
-					setStore({contacts: data.contacts})
+					const data = await response.json();
+					setStore({contacts: data.contacts});
 				},
 				getContact: async(id) => {
 					const uri = `${getStore().baseContactApiUrl}/${getStore().slug}/contacts`;
@@ -64,7 +45,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 					const data = await response.json();
 					const contact = Object.values(data.contacts).filter((contact) => contact.id === parseInt(id))[0];
-					return contact
+					return contact;
 				},
 				addContact: async(dataToSend) => {
 					const uri = `${getStore().baseContactApiUrl}/${getStore().slug}/contacts`;
@@ -75,11 +56,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify(dataToSend)
 					};
-					const response = await fetch(uri, options)
+					const response = await fetch(uri, options);
 					if(!response.ok) {
-						alert("Error")
+						console.log("Error creating contact");
+						return;
 					}
-					getActions().contactApi.getContactList()
+					getActions().contactApi.getContactList();
 				},
 				updateContact: async(dataToSend, id) => {
 					const uri = `${getStore().baseContactApiUrl}/${getStore().slug}/contacts/${id}`;
@@ -90,22 +72,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify(dataToSend)
 					};
-					const response = await fetch(uri, options)
+					const response = await fetch(uri, options);
 					if(!response.ok) {
-						alert("Error")
+						console.log("Error updating contact");
+						return;
 					}
-					getActions().contactApi.getContactList()
+					getActions().contactApi.getContactList();
 				},
 				deleteContact: async(id) => {
 					const uri = `${getStore().baseContactApiUrl}/${getStore().slug}/contacts/${id}`;
 					const options = {
 						method: 'DELETE'
 					};
-					const response = await fetch(uri, options)
+					const response = await fetch(uri, options);
 					if(!response.ok) {
-						alert("Error")
+						console.log("Error removing contact");
+						return;
 					}
-					getActions().contactApi.getContactList()
+					getActions().contactApi.getContactList();
 				}
 			},
 			starWarsApi: {
@@ -120,8 +104,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				},
 				getImage: async (extraUrlData) => {
 					const uri = `${getStore().baseStarWarsImageUrl}/${extraUrlData}.jpg`;
-					console.log(uri);
-					
 					const response = await fetch(uri);
 					if(!response.ok) {
 						console.log("Image not found");
@@ -172,32 +154,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				clear: (type) => {
 					setStore({ [type]: [] })
 				}
-			},
-			getMessage: async () => {
-				try{
-					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
-					const data = await resp.json()
-					setStore({ message: data.message })
-					// don't forget to return something, that is how the async resolves
-					return data;
-				}catch(error){
-					console.log("Error loading message from backend", error)
-				}
-			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
-
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-
-				//reset the global store
-				setStore({ demo: demo });
 			}
 		}
 	};
