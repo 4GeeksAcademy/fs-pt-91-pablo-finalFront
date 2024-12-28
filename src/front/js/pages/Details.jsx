@@ -14,14 +14,32 @@ const isCorrectType = (type) => {
     }
 }
 
-const capitalize = (str) => {
+const suffixes = {
+    // Character suffixes
+    height: "cm",
+    mass: "kg",
+    // Planet suffixes
+    diameter: "km",
+    population: "habitants",
+    surface_water: "%",
+    rotation_period: "hours",
+    orbital_period: "days",
+
+}
+
+const normalize = (str) => {
     if(str === "n/a") return "N/A"
+    if(str.match(/[0-9]{3,}/g)) {
+        const numBackwards = str.split("").reverse().join("")
+        const numBackwardsWithSeparator = numBackwards.match(/.{1,3}/g).join(".")
+        return numBackwardsWithSeparator.split("").reverse().join("")
+    }
     return str[0].toUpperCase() + str.slice(1);
 }
 
 const transformKey = (key) => {
     let transformedKey = key.replace("_", " ");
-    transformedKey = capitalize(transformedKey)
+    transformedKey = normalize(transformedKey)
 
     return transformedKey;
 }
@@ -74,11 +92,9 @@ export const Details = () => {
                     <div className="card-body">
                      {Object.entries(details).map((property) => {
                         if(["name", "created", "updated", "edited"].includes(property[0]) || property[1].includes("https")) return;
-                        let suffix = ""
-                        if(property[0] === "height") suffix = "cm"
-                        if(property[0] === "mass") suffix = "kg"
+                        let suffix = suffixes[property[0]] ? suffixes[property[0]] : "";
                         return (
-                            <p><strong>{transformKey(property[0])}:</strong> {`${capitalize(property[1])} ${suffix}`}</p>
+                            <p key={property[0]}><b>{transformKey(property[0])}:</b> {`${normalize(property[1])} ${suffix}`}</p>
                         )
                      })}
                     </div>

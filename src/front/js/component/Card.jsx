@@ -18,7 +18,7 @@ export const Card = (props) => {
     return (
         <div className="card col p-0">
             <img src={imageUrl} className="card-img-top w-100" alt={`${props.name}'s picture`} />
-            <div className="card-body">
+            <div className="card-body d-flex flex-column justify-content-end">
               <h5 className="card-title">{props.name}</h5>
               <div className="d-flex justify-content-between">
                 <Link to={`./${props.uid}`}>

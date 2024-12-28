@@ -106,7 +106,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const response = await fetch(uri);
 					if(!response.ok) {
 						console.log("Image not found");
-						return;
+						return "https://starwars-visualguide.com/assets/img/big-placeholder.jpg";
 					}
 					return response.url;
 				},
@@ -119,6 +119,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 					const data = await response.json();
 					setStore({ characters: data.results })
+				},
+				getPlanets: async (optionalData) => {
+					const uri = `${getStore().baseSwapiUrl}/planets?${optionalData}`;
+					const response = await fetch(uri);
+					if(!response.ok) {
+						console.log("Characters not found");
+						return;
+					}
+					const data = await response.json();
+					setStore({ planets: data.results })
 				},
 				getDetails: async (extraUrlData) => {
 					const uri = `${getStore().baseSwapiUrl}/${extraUrlData}`;
