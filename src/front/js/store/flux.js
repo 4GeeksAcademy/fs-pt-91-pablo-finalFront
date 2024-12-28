@@ -119,7 +119,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return data;
 				},
 				getImage: async (extraUrlData) => {
-					const uri = `${getStore().baseStarWarsImageUrl}/${extraUrlData}.jpg`
+					const uri = `${getStore().baseStarWarsImageUrl}/${extraUrlData}.jpg`;
+					console.log(uri);
+					
 					const response = await fetch(uri);
 					if(!response.ok) {
 						console.log("Image not found");
