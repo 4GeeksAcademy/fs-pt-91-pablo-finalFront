@@ -12,7 +12,7 @@ export const Navbar = () => {
 				<div className="collapse navbar-collapse">
 					<ul className="navbar-nav">
 						<li className="nav-item">
-							<Link to="/characters" className="nav-link">
+							<Link to="/people" className="nav-link">
 								<span>Characters</span>
 							</Link>
 						</li>

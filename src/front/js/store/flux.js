@@ -15,7 +15,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			],
 			contacts: [],
-			baseUrl: "https://playground.4geeks.com/contact/agendas",
+			characters: [],
+			planets: [],
+			spaceships: [],
+			baseContactApiUrl: "https://playground.4geeks.com/contact/agendas",
+			baseStarWarsImageUrl: "https://starwars-visualguide.com/assets/img",
+			baseSwapiUrl: "https://www.swapi.tech/api",
 			slug: "spain-91-pablo"
 		},
 		actions: {
@@ -25,7 +30,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			contactApi: {
 				getContactList: async() => {
-					const uri = `${getStore().baseUrl}/${getStore().slug}`;
+					const uri = `${getStore().baseContactApiUrl}/${getStore().slug}`;
 
 					const response = await fetch(uri);
 					if(!response.ok) {
@@ -43,7 +48,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({contacts: data.contacts})
 				},
 				getContact: async(id) => {
-					const uri = `${getStore().baseUrl}/${getStore().slug}/contacts`;
+					const uri = `${getStore().baseContactApiUrl}/${getStore().slug}/contacts`;
 					const response = await fetch(uri);
 					if(!response.ok) {
 						console.log("Contact not found");
@@ -54,7 +59,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return contact
 				},
 				addContact: async(dataToSend) => {
-					const uri = `${getStore().baseUrl}/${getStore().slug}/contacts`;
+					const uri = `${getStore().baseContactApiUrl}/${getStore().slug}/contacts`;
 					const options = {
 						method: 'POST',
 						headers: {
@@ -69,7 +74,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					getActions().contactApi.getContactList()
 				},
 				updateContact: async(dataToSend, id) => {
-					const uri = `${getStore().baseUrl}/${getStore().slug}/contacts/${id}`;
+					const uri = `${getStore().baseContactApiUrl}/${getStore().slug}/contacts/${id}`;
 					const options = {
 						method: 'PUT',
 						headers: {
@@ -84,7 +89,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					getActions().contactApi.getContactList()
 				},
 				deleteContact: async(id) => {
-					const uri = `${getStore().baseUrl}/${getStore().slug}/contacts/${id}`;
+					const uri = `${getStore().baseContactApiUrl}/${getStore().slug}/contacts/${id}`;
 					const options = {
 						method: 'DELETE'
 					};
@@ -93,6 +98,37 @@ const getState = ({ getStore, getActions, setStore }) => {
 						alert("Error")
 					}
 					getActions().contactApi.getContactList()
+				}
+			},
+			starWarsApi: {
+				getImage: async (extraUrlData) => {
+					const uri = `${getStore().baseStarWarsImageUrl}/${extraUrlData}.jpg`
+					const response = await fetch(uri);
+					if(!response.ok) {
+						console.log("Image not found");
+						return;
+					}
+					return response.url;
+				},
+				getCharacters: async (optionalData) => {
+					const uri = `${getStore().baseSwapiUrl}/people?${optionalData}`;
+					const response = await fetch(uri);
+					if(!response.ok) {
+						console.log("Characters not found");
+						return;
+					}
+					const data = await response.json();
+					setStore({ characters: data.results })
+				},
+				getDetails: async (extraUrlData) => {
+					const uri = `${getStore().baseSwapiUrl}/${extraUrlData}`;
+					const response = await fetch(uri);
+					if(!response.ok) {
+						console.log("Character details not found");
+						return;
+					}
+					const data = await response.json();
+					return data.result.properties;
 				}
 			},
 			getMessage: async () => {
