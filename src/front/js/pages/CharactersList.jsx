@@ -7,8 +7,8 @@ export const CharactersList = () => {
     const {store, actions} = useContext(Context)
     const [isLoading, setIsLoading] = useState(true)
     useEffect(() => {
-        actions.starWarsApi.getCharacters().then(() => setIsLoading(false));
-    }, [])
+        setIsLoading(store.characters.length === 0)
+    }, [store.characters])
 
     return (
         <div className="container-fluid mt-5">

@@ -17,7 +17,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			contacts: [],
 			characters: [],
 			planets: [],
-			spaceships: [],
+			starships: [],
 			baseContactApiUrl: "https://playground.4geeks.com/contact/agendas",
 			baseStarWarsImageUrl: "https://starwars-visualguide.com/assets/img",
 			baseSwapiUrl: "https://www.swapi.tech/api",
@@ -101,6 +101,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			starWarsApi: {
+				get: async(uri) => {
+					const response = await fetch(uri);
+					if(!response.ok) {
+						console.log("Not found");
+						return;
+					}
+					const data = await response.json();
+					return data;
+				},
 				getImage: async (extraUrlData) => {
 					const uri = `${getStore().baseStarWarsImageUrl}/${extraUrlData}.jpg`
 					const response = await fetch(uri);
@@ -129,6 +138,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 					const data = await response.json();
 					setStore({ planets: data.results })
+				},
+				getStarships: async (optionalData) => {
+					const uri = `${getStore().baseSwapiUrl}/starships?${optionalData}`;
+					const response = await fetch(uri);
+					if(!response.ok) {
+						console.log("Characters not found");
+						return;
+					}
+					const data = await response.json();
+					setStore({ starships: data.results })
 				},
 				getDetails: async (extraUrlData) => {
 					const uri = `${getStore().baseSwapiUrl}/${extraUrlData}`;

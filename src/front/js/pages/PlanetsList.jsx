@@ -4,11 +4,11 @@ import { Context } from "../store/appContext.js";
 import { Spinner } from "../component/Spinner.jsx";
 
 export const PlanetsList = () => {
-    const {store, actions} = useContext(Context)
+    const {store} = useContext(Context)
         const [isLoading, setIsLoading] = useState(true)
         useEffect(() => {
-            actions.starWarsApi.getPlanets().then(() => setIsLoading(false));
-        }, [])
+            setIsLoading(store.planets.length === 0);
+        }, [store.planets])
     
         return (
             <div className="container-fluid mt-5">
