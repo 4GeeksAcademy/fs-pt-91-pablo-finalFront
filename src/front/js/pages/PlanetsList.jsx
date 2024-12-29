@@ -11,6 +11,15 @@ export const PlanetsList = () => {
 
     useEffect(() => {
         setIsLoading(store.planets.results === undefined);
+
+        if(store.planets.results !== undefined) {
+            if(store.planets.next === null) {
+                setIsLoading(store.planets.total_pages)
+            } else {
+                const nextPageNumber = parseInt(store.planets.next.split("page=")[1][0]);
+                setCurrentPage(nextPageNumber - 1);
+            }
+        }
     }, [store.planets]);
 
     return (

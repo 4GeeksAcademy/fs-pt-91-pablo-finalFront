@@ -11,7 +11,16 @@ export const CharactersList = () => {
 
     useEffect(() => {
         setIsLoading(store.people.results === undefined);
-    }, [store]);
+
+        if(store.people.results !== undefined) {
+            if(store.people.next === null) {
+                setIsLoading(store.people.total_pages)
+            } else {
+                const nextPageNumber = parseInt(store.people.next.split("page=")[1][0]);
+                setCurrentPage(nextPageNumber - 1);
+            }
+        }
+    }, [store.people]);
 
     return (
         <div className="container-fluid mt-5">

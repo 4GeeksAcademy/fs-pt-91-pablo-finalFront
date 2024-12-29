@@ -18,6 +18,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			removeFavorite: (toRemoveRedirect) => {
 				setStore({favorites: getStore().favorites.filter((favorite) => favorite.redirect !== toRemoveRedirect)});
 			},
+			setFromLocalStorage: (type) => {
+				const data = localStorage.getItem(type);
+				setStore({ [type]: JSON.parse(data) })
+			},
 			contactApi: {
 				getContactList: async() => {
 					const uri = `${getStore().baseContactApiUrl}/${getStore().slug}`;
@@ -106,6 +110,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const uri = `${getStore().baseSwapiUrl}/${type}?${optionalData}`;
 					const data = await getActions().starWarsApi.getWithUri(uri);
 					setStore({ [type]: data })
+					localStorage.setItem(type, JSON.stringify(data))
 				},
 				getImage: async (extraUrlData) => {
 					const uri = `${getStore().baseStarWarsImageUrl}/${extraUrlData}.jpg`;

@@ -11,6 +11,15 @@ export const StarshipsList = () => {
 
     useEffect(() => {
         setIsLoading(store.starships.results === undefined);
+        
+        if(store.starships.results !== undefined) {
+            if(store.starships.next === null) {
+                setIsLoading(store.starships.total_pages)
+            } else {
+                const nextPageNumber = parseInt(store.starships.next.split("page=")[1][0]);
+                setCurrentPage(nextPageNumber - 1);
+            }
+        }
     }, [store.starships]);
 
     return (
