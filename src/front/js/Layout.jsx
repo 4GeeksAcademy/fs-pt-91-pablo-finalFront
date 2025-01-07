@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Home } from "./pages/Home.jsx";
@@ -10,6 +9,10 @@ import { Navbar } from "./component/Navbar.jsx";
 import { Footer } from "./component/Footer.jsx";
 import { ContactForm } from "./pages/ContactForm.jsx";
 import { ContactList } from "./pages/ContactList.jsx";
+import { CharactersList } from "./pages/CharactersList.jsx";
+import { PlanetsList } from "./pages/PlanetsList.jsx";
+import { StarshipsList } from "./pages/StarshipsList.jsx";
+import { Details } from "./pages/Details.jsx";
 
 //create your first component
 const Layout = () => {
@@ -22,16 +25,23 @@ const Layout = () => {
     return (
         <div>
             <BrowserRouter basename={basename}>
-                <ScrollToTop>
-                    <Navbar />
-                    <Routes>
-                        <Route element={<ContactList />} path="/" />
-                        <Route element={<ContactForm />} path="/add-contact" />
-                        <Route element={<ContactForm />} path="/edit-contact/:id" />
-                        <Route element={<h1>Not found!</h1>} path="*" />
-                    </Routes>
-                    <Footer />
-                </ScrollToTop>
+                <Navbar />
+                <Routes>
+                    <Route element={<Home />} path="/" />
+
+                    <Route element={<CharactersList />} path="/people" />
+                    <Route element={<PlanetsList />} path="/planets" />
+                    <Route element={<StarshipsList />} path="/starships" />
+
+                    <Route element={<Details />} path="/:type/:id" />
+
+                    <Route element={<ContactList />} path="/contact-list" />
+                    <Route element={<ContactForm />} path="/add-contact" />
+                    <Route element={<ContactForm />} path="/add-contact/:id" />
+                    
+                    <Route element={<h1>Not found!</h1>} path="*" />
+                </Routes>
+                <Footer />
             </BrowserRouter>
         </div>
     );
