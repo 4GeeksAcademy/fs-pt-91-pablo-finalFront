@@ -37,7 +37,7 @@ const Layout = () => {
 
                     <Route element={<ContactList />} path="/contact-list" />
                     <Route element={<ContactForm />} path="/add-contact" />
-                    <Route element={<ContactForm />} path="/edit-contact/:id" />
+                    <Route element={<ContactForm />} path="/add-contact/:id" />
                     
                     <Route element={<h1>Not found!</h1>} path="*" />
                 </Routes>

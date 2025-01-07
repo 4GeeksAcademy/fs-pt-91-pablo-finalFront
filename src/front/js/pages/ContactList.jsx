@@ -52,7 +52,7 @@ export const ContactList = () => {
                                     </div>
                                 </div>
                                 <div className="col-md-6 d-flex justify-content-end px-2 gap-2">
-                                    <button className="btn" onClick={() => navigate(`edit-contact/${contact.id}`)}><i className="fa-solid fa-pencil"></i></button>
+                                    <button className="btn" onClick={() => navigate(`../add-contact/${contact.id}`)}><i className="fa-solid fa-pencil"></i></button>
                                     <button className="btn text-danger" data-bs-toggle="modal" data-bs-target="#deleteContactModal" onClick={() => handleShowModal(contact)}><i className="fa-solid fa-trash"></i></button>
                                 </div>
                             </div>
@@ -64,7 +64,7 @@ export const ContactList = () => {
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
                         <div className="modal-header justify-content-between">
-                            <h1 className="modal-title fs-5" id="deleteContactModalLabel">Modal title</h1>
+                            <h1 className="modal-title fs-5" id="deleteContactModalLabel">Eliminar contacto</h1>
                             <button type="button" className="btn-close m-0" data-bs-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true"></span>
                             </button>
