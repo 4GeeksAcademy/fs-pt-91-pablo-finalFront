@@ -29,7 +29,19 @@ It is recomended to install the backend first, make sure you have Python 3.8, Pi
 5. Run the migrations: `$ pipenv run upgrade`
 6. Run the application: `$ pipenv run start`
 
-> Note: Codespaces users can connect to psql by typing: `psql -h localhost -U gitpod example`
+> [!NOTE] 
+> Codespaces users can connect to psql by typing: `psql -h localhost -U gitpod example`
+
+### Reset database 
+
+You are able to reset your database by running
+
+```sh
+$ pipenv run reset db
+``` 
+
+> [!CAUTION]
+> You should only use this if there isn't a production database, because this will DELETE ALL INFORMATION.
 
 ### Undo a migration
 
