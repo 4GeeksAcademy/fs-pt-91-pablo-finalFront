@@ -37,3 +37,12 @@ class Medias(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     media_type = db.Column(db.Enum('image', 'video', 'podcast', name='media_type'), unique=False, nullable=False)
     url = db.Column(db.String(), unique=True, nullable=False)
+
+
+class Comments(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.String(), unique=False, nullable=False)
+
+
+class Followers(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
