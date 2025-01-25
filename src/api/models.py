@@ -37,3 +37,35 @@ class Medias(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     media_type = db.Column(db.Enum('image', 'video', 'podcast', name='media_type'), unique=False, nullable=False)
     url = db.Column(db.String(), unique=True, nullable=False)
+
+
+class Characters(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(), unique=True, nullable=False)
+    height = db.Column(db.Integer, unique=False, nullable=False)
+    mass = db.Column(db.Integer, unique=False, nullable=False)
+    hair_color = db.Column(db.String(), unique=False, nullable=True)
+    skin_color = db.Column(db.String(), unique=False, nullable=True)
+    eye_color = db.Column(db.String(), unique=False, nullable=True)
+    birth_year = db.Column(db.Integer, unique=False, nullable=True)
+    gender = db.Column(db.Enum('male', 'female', name='gender'), unique=False, nullable=True)
+
+
+class CharacterFavorites(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+
+class Planets(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(), unique=True, nullable=False)
+    diameter = db.Column(db.Integer, unique=False, nullable=False)
+    rotation_period = db.Column(db.Integer, unique=False, nullable=False)
+    orbital_period = db.Column(db.Integer, unique=False, nullable=False)
+    gravity = db.Column(db.String(), unique=False, nullable=False)
+    population = db.Column(db.Integer, unique=False, nullable=False)
+    climate = db.Column(db.String(), unique=False, nullable=False)
+    terrain = db.Column(db.String(), unique=False, nullable=False)
+
+
+class PlanetFavorites(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
