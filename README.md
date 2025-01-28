@@ -37,7 +37,7 @@ It is recomended to install the backend first, make sure you have Python 3.8, Pi
 You are able to reset your database by running
 
 ```sh
-$ pipenv run reset db
+$ pipenv run reset_db
 ``` 
 
 > [!CAUTION]
