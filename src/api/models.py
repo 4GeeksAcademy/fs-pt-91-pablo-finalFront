@@ -36,7 +36,7 @@ class Posts(db.Model):
     user_to = db.relationship('Users', foreign_keys=[user_id], backref=db.backref('posts_to', lazy='select'))
 
     def __repr__(self):
-        return f'<Post: {self.id} - {self.title}>'
+        return f'<Post: {self.id} - Title: {self.title}>'
 
 
 class Medias(db.Model):
@@ -44,7 +44,7 @@ class Medias(db.Model):
     media_type = db.Column(db.Enum('image', 'video', 'podcast', name='media_type'), unique=False, nullable=False)
     url = db.Column(db.String(), unique=True, nullable=False)
     post_id = db.Column(db.Integer(), db.ForeignKey('posts.id'), unique=True)
-    post_to = db.relationship('Posts', foreign_keys=[post_id], backref=db.backref('media_to', lazy='select'))
+    post_to = db.relationship('Posts', foreign_keys=[post_id], backref=db.backref('media_posts_to', lazy='select'))
 
 
 class Comments(db.Model):
@@ -53,15 +53,18 @@ class Comments(db.Model):
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
     user_to = db.relationship('Users', foreign_keys=[user_id], backref=db.backref('authors_to', lazy='select'))
     post_id = db.Column(db.Integer(), db.ForeignKey('posts.id'))
-    post_to = db.relationship('Posts', foreign_keys=[post_id], backref=db.backref('media_to', lazy='select'))
+    post_to = db.relationship('Posts', foreign_keys=[post_id], backref=db.backref('post_comments_to', lazy='select'))
+
+    def __repr__(self):
+        return f'<Post: {self.post_id} - User: {self.user_id} - {self.body}>'
 
 
 class Followers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     follower_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    follower_to = db.relationship('Users', foreing_keys=[follower_id], backref=db.backref('followers_to', lazy='select'))
+    follower_to = db.relationship('Users', foreign_keys=[follower_id], backref=db.backref('followers_to', lazy='select'))
     following_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    following_to = db.relationship('Users', foreing_keys=[following_id], backref=db.backref('followings_to', lazy='select'))
+    following_to = db.relationship('Users', foreign_keys=[following_id], backref=db.backref('followings_to', lazy='select'))
 
     def __repr__(self):
         return f'<Follower: {self.follower_id} - Following {self.following_id}>'
