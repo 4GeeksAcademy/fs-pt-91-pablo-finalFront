@@ -53,7 +53,13 @@ class Characters(db.Model):
 
 class CharacterFavorites(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
+    users_to = db.relationship('Users', foreign_keys=[user_id], backref=db.backref('users_fav_characters_to', lazy='select'))
+    character_id = db.Column(db.Integer(), db.ForeignKey('characters.id'))
+    characters_to = db.relationship('Characters', foreign_keys=[character_id], backref=db.backref('characters_to', lazy='select'))
 
+    def __repr__(self):
+        return f'<User: {self.user_id} - Character: {self.character_id}>'
 
 class Planets(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -69,3 +75,10 @@ class Planets(db.Model):
 
 class PlanetFavorites(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
+    users_to = db.relationship('Users', foreign_keys=[user_id], backref=db.backref('users_fav_planets_to', lazy='select'))
+    planet_id = db.Column(db.Integer(), db.ForeignKey('planets.id'))
+    planets_to = db.relationship('Planets', foreign_keys=[planet_id], backref=db.backref('planets_to', lazy='select'))
+
+    def __repr__(self):
+        return f'<User: {self.user_id} - Planet: {self.planet_id}>'
