@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 
 db = SQLAlchemy()
@@ -30,13 +31,22 @@ class Posts(db.Model):
     title = db.Column(db.String(), unique=False, nullable=False)
     description = db.Column(db.String(), unique=False, nullable=True)
     body = db.Column(db.String(), unique=False, nullable=True)
-    date = db.Column(db.DateTime(), unique=False, nullable=False)  # TODO: poner default
+    date = db.Column(db.DateTime(), unique=False, nullable=False, default=datetime.utcnow())
     image_url = db.Column(db.String(), unique=False, nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
     user_to = db.relationship('Users', foreign_keys=[user_id], backref=db.backref('posts_to', lazy='select'))
 
     def __repr__(self):
         return f'<Post: {self.id} - Title: {self.title}>'
+    
+    def serialize(self):
+        return {'id': self.id,
+                'title': self.title,
+                'description': self.description,
+                'body': self.body,
+                'date': self.date,
+                'image_url': self.image_url,
+                'user_id': self.user_id}
 
 
 class Medias(db.Model):
@@ -46,6 +56,11 @@ class Medias(db.Model):
     post_id = db.Column(db.Integer(), db.ForeignKey('posts.id'), unique=True)
     post_to = db.relationship('Posts', foreign_keys=[post_id], backref=db.backref('media_posts_to', lazy='select'))
 
+    def serialize(self):
+        return {'id': self.id,
+                'media_type': self.media_type,
+                'url': self.url,
+                'post_id': self.post_id}
 
 class Comments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -57,6 +72,12 @@ class Comments(db.Model):
 
     def __repr__(self):
         return f'<Post: {self.post_id} - User: {self.user_id} - {self.body}>'
+    
+    def serialize(self):
+        return {'id': self.id,
+                'body': self.body,
+                'user_id': self.user_id,
+                'post_id': self.post_id}
 
 
 class Followers(db.Model):
@@ -68,6 +89,11 @@ class Followers(db.Model):
 
     def __repr__(self):
         return f'<Follower: {self.follower_id} - Following {self.following_id}>'
+    
+    def serialize(self):
+        return {'id': self.id,
+                'follower_id': self.follower_id,
+                'following_id': self.following_id}
 
 
 class Characters(db.Model):
@@ -81,6 +107,17 @@ class Characters(db.Model):
     birth_year = db.Column(db.Integer, unique=False, nullable=True)
     gender = db.Column(db.Enum('male', 'female', name='gender'), unique=False, nullable=True)
 
+    def serialize(self):
+        return {'id': self.id,
+                'name': self.name,
+                'height': str(self.height),
+                'mass': str(self.mass),
+                'hair_color': self.hair_color,
+                'skin_color': self.skin_color,
+                'eye_color': self.eye_color,
+                'birth_year': str(self.birth_year),
+                'gender': str(self.gender)}
+
 
 class CharacterFavorites(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -91,6 +128,12 @@ class CharacterFavorites(db.Model):
 
     def __repr__(self):
         return f'<User: {self.user_id} - Character: {self.character_id}>'
+    
+    def serialize(self):
+        return {'id': self.id,
+                'user_id': self.user_id,
+                'character_id': self.character_id}
+
 
 class Planets(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -103,6 +146,17 @@ class Planets(db.Model):
     climate = db.Column(db.String(), unique=False, nullable=False)
     terrain = db.Column(db.String(), unique=False, nullable=False)
 
+    def serialize(self):
+        return {'id': self.id,
+                'name': self.name,
+                'diameter': str(self.diameter),
+                'rotation_period': str(self.rotation_period),
+                'orbital_period': str(self.orbital_period),
+                'gravity': self.gravity,
+                'population': str(self.population),
+                'climate': self.climate,
+                'terrain': self.terrain}
+
 
 class PlanetFavorites(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -113,3 +167,8 @@ class PlanetFavorites(db.Model):
 
     def __repr__(self):
         return f'<User: {self.user_id} - Planet: {self.planet_id}>'
+    
+    def serialize(self):
+        return {'id': self.id,
+                'user_id': self.user_id,
+                'planet_id': self.planet_id}
