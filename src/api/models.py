@@ -62,6 +62,7 @@ class Medias(db.Model):
                 'url': self.url,
                 'post_id': self.post_id}
 
+
 class Comments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(), unique=False, nullable=False)
