@@ -1,6 +1,7 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
+import requests
 from flask import Flask, request, jsonify, url_for, Blueprint
 from flask_cors import CORS
 from api.utils import generate_sitemap, APIException
@@ -18,7 +19,6 @@ def handle_hello():
     return response_body, 200
 
 
-"""TODO: Funciona"""
 @api.route('/users', methods=['GET'])
 def users():
     response_body = {}
@@ -28,7 +28,6 @@ def users():
     return response_body, 200
 
 
-"""TODO: Funciona"""
 @api.route('/posts', methods=['GET', 'POST'])
 def posts():
     response_body = {}
@@ -54,7 +53,6 @@ def posts():
         return response_body, 201
 
 
-"""TODO: Funciona"""
 @api.route('/posts/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 def post(id):
     response_body = {}
@@ -85,7 +83,33 @@ def post(id):
         return response_body, 200
 
 
-"""TODO: Funciona"""
+@api.route('/users/<int:id>/posts', methods=['GET'])
+def posts_by_user(id):
+    response_body = {}
+    rows = db.session.execute(db.select(Posts).where(Posts.user_id == id)).scalars()
+    response_body['results'] = [row.serialize() for row in rows]
+    response_body['message'] = f'Posts del usuario con id: {id}'
+    return response_body, 200
+
+
+@api.route('/posts/<int:id>/comments', methods=['GET'])
+def comments_of_post(id):
+    response_body = {}
+    rows = db.session.execute(db.select(Comments).where(Comments.post_id == id)).scalars()
+    response_body['results'] = [row.serialize() for row in rows]
+    response_body['message'] = f'Comentarios del post con id: {id}'
+    return response_body, 200
+
+
+@api.route('/users/<int:id>/comments', methods=['GET'])
+def comments_by_user(id):
+    response_body = {}
+    rows = db.session.execute(db.select(Comments).where(Comments.user_id == id)).scalars()
+    response_body['results'] = [row.serialize() for row in rows]
+    response_body['message'] = f'Comentarios del usuario con id: {id}'
+    return response_body, 200
+
+
 @api.route('/medias', methods=['GET', 'POST'])
 def medias():
     response_body = {}
@@ -108,7 +132,6 @@ def medias():
         return response_body, 201
 
 
-"""TODO: Funciona"""
 @api.route('/medias/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 def media(id):
     response_body = {}
@@ -137,7 +160,6 @@ def media(id):
         return response_body, 200
 
 
-"""TODO: Funciona"""
 @api.route('/comments', methods=['GET', 'POST'])
 def comments():
     response_body = {}
@@ -160,7 +182,6 @@ def comments():
         return response_body, 201
 
 
-"""TODO: Funciona"""
 @api.route('/comments/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 def comment(id):
     response_body = {}
@@ -189,7 +210,6 @@ def comment(id):
         return response_body, 200
 
 
-"""TODO: Funciona"""
 @api.route('/followers', methods=['GET', 'POST'])
 def followers():
     response_body = {}
@@ -211,7 +231,6 @@ def followers():
         return response_body, 201
 
 
-"""TODO: Funciona"""
 @api.route('/followers/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 def follower(id):
     response_body = {}
@@ -240,7 +259,6 @@ def follower(id):
         return response_body, 200
 
 
-"""TODO: Funciona"""
 @api.route('/characters', methods=['GET'])
 def characters():
     response_body = {}
@@ -249,11 +267,63 @@ def characters():
         response_body['message'] = 'Listado de personajes'
         response_body['results'] = [row.serialize() for row in rows]
         return response_body, 200
-    if request.method == 'POST':
-        pass
 
 
-"""TODO: Funciona"""
+@api.route('/swapi/characters', methods=['GET'])
+def characters_swapi():
+    response_body = {}
+    url = 'https://www.swapi.tech/api/people'
+    response = requests.get(url)
+    if response.status_code == 200:
+        response_data = response.json()
+        next_url = response_data.get('next')
+        while True:
+            results = response_data.get('results')
+            for result in results:
+                character_response = requests.get(result['url'])
+                if character_response.status_code == 200:
+                    character_data = character_response.json().get('result').get('properties')
+                    print(character_data)
+                    character = Characters(
+                        id = character_data.get('id'),
+                        name = character_data.get('name'),
+                        height = int(character_data.get('height')) if character_data.get('height') != 'unknown' else None,
+                        mass = float(character_data.get('mass').replace(',', '.')) if character_data.get('mass') != 'unknown' else None,
+                        hair_color = character_data.get('hair_color'),
+                        skin_color = character_data.get('skin_color'),
+                        eye_color = character_data.get('eye_color'),
+                        birth_year = character_data.get('birth_year'),
+                        gender = character_data.get('gender'))
+                    db.session.add(character)
+                else:
+                    response_body['message'] = 'Error al importar personajes desde SWAPI'
+                    db.session.rollback()
+                    return response_body, 400
+            if next_url is None:
+                break
+            else:
+                next_response = requests.get(next_url)
+                response_data = next_response.json()
+                next_url = response_data.get('next')
+        db.session.commit()
+        response_body['message'] = 'Listado de personajes desde SWAPI importados correctamente'
+        return response_body, 200
+    return response_body, 400
+
+
+@api.route('/characters/<int:id>', methods=['GET'])
+def character(id):
+    response_body = {}
+    row = db.session.execute(db.select(Characters).where(Characters.id == id)).scalar()
+    # Validar si el id exite
+    if not row:
+        response_body['message'] =  f'El personaje con id: {id} no existe'
+        return response_body, 400
+    response_body['results'] = row.serialize()
+    response_body['message'] = f'Personaje con id: {id}'
+    return response_body, 200
+
+
 @api.route('/planets', methods=['GET'])
 def planets():
     response_body = {}
@@ -266,7 +336,61 @@ def planets():
         pass
 
 
-"""TODO: Funciona"""
+@api.route('/swapi/planets', methods=['GET'])
+def planets_swapi():
+    response_body = {}
+    url = 'https://www.swapi.tech/api/planets'
+    response = requests.get(url)
+    if response.status_code == 200:
+        response_data = response.json()
+        next_url = response_data.get('next')
+        while True:
+            results = response_data.get('results')
+            for result in results:
+                planet_response = requests.get(result['url'])
+                if planet_response.status_code == 200:
+                    planet_data = planet_response.json().get('result').get('properties')
+                    print(planet_data)
+                    planet = Planets(
+                        id = planet_data.get('id'),
+                        name = planet_data.get('name'),
+                        diameter = int(planet_data.get('diameter')) if planet_data.get('diameter') != 'unknown' else None,
+                        rotation_period = int(planet_data.get('rotation_period')) if planet_data.get('rotation_period') != 'unknown' else None,
+                        orbital_period = int(planet_data.get('orbital_period')) if planet_data.get('orbital_period') != 'unknown' else None,
+                        gravity = planet_data.get('gravity'),
+                        population = int(planet_data.get('population')) if planet_data.get('population') != 'unknown' else None,
+                        climate = planet_data.get('climate'),
+                        terrain = planet_data.get('terrain'))
+                    db.session.add(planet)
+                else:
+                    response_body['message'] = 'Error al importar planetas desde SWAPI'
+                    db.session.rollback()
+                    return response_body, 400            
+            if next_url is None:
+                break
+            else:
+                next_response = requests.get(next_url)
+                response_data = next_response.json()
+                next_url = response_data.get('next')
+        db.session.commit()
+        response_body['message'] = 'Listado de planetas desde SWAPI importados correctamente'
+        return response_body, 200
+    return response_body, 400
+
+
+@api.route('/planets/<int:id>', methods=['GET'])
+def planet(id):
+    response_body = {}
+    row = db.session.execute(db.select(Planets).where(Planets.id == id)).scalar()
+    # Validar si el id exite
+    if not row:
+        response_body['message'] =  f'El planeta con id: {id} no existe'
+        return response_body, 400
+    response_body['results'] = row.serialize()
+    response_body['message'] = f'Planeta con id: {id}'
+    return response_body, 200
+
+
 @api.route('/character-favorites', methods=['GET', 'POST'])
 def character_favorites():
     response_body = {}
@@ -288,7 +412,6 @@ def character_favorites():
         return response_body, 201
 
 
-"""TODO: Funciona"""
 @api.route('/character-favorites/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 def character_favorite(id):
     response_body = {}
@@ -316,7 +439,6 @@ def character_favorite(id):
         return response_body, 200
 
 
-"""TODO: Funciona"""
 @api.route('/planet-favorites', methods=['GET', 'POST'])
 def planet_favorites():
     response_body = {}
@@ -338,7 +460,6 @@ def planet_favorites():
         return response_body, 201
 
 
-"""TODO: Funciona"""
 @api.route('/planet-favorites/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 def planet_favorite(id):
     response_body = {}

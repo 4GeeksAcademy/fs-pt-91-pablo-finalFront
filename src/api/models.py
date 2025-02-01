@@ -100,24 +100,24 @@ class Followers(db.Model):
 class Characters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(), unique=True, nullable=False)
-    height = db.Column(db.Integer, unique=False, nullable=False)
-    mass = db.Column(db.Integer, unique=False, nullable=False)
+    height = db.Column(db.Integer, unique=False, nullable=True)
+    mass = db.Column(db.Float, unique=False, nullable=True)
     hair_color = db.Column(db.String(), unique=False, nullable=True)
     skin_color = db.Column(db.String(), unique=False, nullable=True)
     eye_color = db.Column(db.String(), unique=False, nullable=True)
-    birth_year = db.Column(db.Integer, unique=False, nullable=True)
-    gender = db.Column(db.Enum('male', 'female', name='gender'), unique=False, nullable=True)
+    birth_year = db.Column(db.String(), unique=False, nullable=True)
+    gender = db.Column(db.Enum('male', 'female', 'hermaphrodite', 'none', 'n/a', name='gender'), unique=False, nullable=True)
 
     def serialize(self):
         return {'id': self.id,
                 'name': self.name,
-                'height': str(self.height),
-                'mass': str(self.mass),
+                'height': self.height,
+                'mass': self.mass,
                 'hair_color': self.hair_color,
                 'skin_color': self.skin_color,
                 'eye_color': self.eye_color,
-                'birth_year': str(self.birth_year),
-                'gender': str(self.gender)}
+                'birth_year': self.birth_year,
+                'gender': self.gender}
 
 
 class CharacterFavorites(db.Model):
@@ -139,22 +139,22 @@ class CharacterFavorites(db.Model):
 class Planets(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(), unique=True, nullable=False)
-    diameter = db.Column(db.Integer, unique=False, nullable=False)
-    rotation_period = db.Column(db.Integer, unique=False, nullable=False)
-    orbital_period = db.Column(db.Integer, unique=False, nullable=False)
+    diameter = db.Column(db.Integer, unique=False, nullable=True)
+    rotation_period = db.Column(db.Integer, unique=False, nullable=True)
+    orbital_period = db.Column(db.Integer, unique=False, nullable=True)
     gravity = db.Column(db.String(), unique=False, nullable=False)
-    population = db.Column(db.Integer, unique=False, nullable=False)
+    population = db.Column(db.BigInteger, unique=False, nullable=True)
     climate = db.Column(db.String(), unique=False, nullable=False)
     terrain = db.Column(db.String(), unique=False, nullable=False)
 
     def serialize(self):
         return {'id': self.id,
                 'name': self.name,
-                'diameter': str(self.diameter),
-                'rotation_period': str(self.rotation_period),
-                'orbital_period': str(self.orbital_period),
+                'diameter': self.diameter,
+                'rotation_period': self.rotation_period,
+                'orbital_period': self.orbital_period,
                 'gravity': self.gravity,
-                'population': str(self.population),
+                'population': self.population,
                 'climate': self.climate,
                 'terrain': self.terrain}
 
