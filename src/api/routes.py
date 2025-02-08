@@ -2,10 +2,11 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import requests
-from flask import Flask, request, jsonify, url_for, Blueprint
+from flask import Flask, request, Blueprint
 from flask_cors import CORS
 from api.utils import generate_sitemap, APIException
 from api.models import db, Users, Posts, Medias, Comments, Followers, Characters, Planets, CharacterFavorites, PlanetFavorites
+from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, jwt_required
 
 
 api = Blueprint('api', __name__)
@@ -19,12 +20,62 @@ def handle_hello():
     return response_body, 200
 
 
+# Create a route to authenticate your users and return JWTs. The
+# create_access_token() function is used to actually generate the JWT.
+@api.route("/login", methods=["POST"])
+def login():
+    response_body = {}
+    data = request.json
+    email = data.get("email", None)
+    password = data.get("password", None)
+
+    row = db.session.execute(db.select(Users).where(Users.email == email, Users.password == password, Users.is_active == True)).scalar()
+
+    if not row:
+        response_body["message"] = "User not found"
+        return response_body, 401
+
+    user_data = row.serialize()
+    access_token = create_access_token(identity=email, additional_claims={'user_id': user_data["id"], 'is_active': user_data['is_active']})
+    response_body["access_token"] = access_token
+    response_body["message"] = "User logged"
+    response_body["result"] = user_data
+    return response_body, 200
+
+
+# Protect a route with jwt_required, which will kick out requests
+# without a valid JWT present.
+@api.route("/protected", methods=["GET"])
+@jwt_required()
+def protected():
+    response_body = {}
+    # Access the identity of the current user with get_jwt_identity
+    current_user = get_jwt_identity()
+    data = get_jwt()
+    response_body["message"] = f'Logged in as {current_user}'
+    return response_body, 200
+
+
 @api.route('/users', methods=['GET'])
 def users():
     response_body = {}
     rows = db.session.execute(db.select(Users)).scalars()
     response_body['message'] = 'Listado de usuarios'
     response_body['results'] = [row.serialize() for row in rows]
+    return response_body, 200
+
+
+@api.route('/users/<int:id>', methods=['GET'])
+@jwt_required()
+def user(id):
+    additional_claims = get_jwt()
+    response_body = {}
+    if id != additional_claims['user_id']:
+        response_body['message'] = 'No tiene autorización'
+        return response_body, 401
+    row = db.session.execute(db.select(Users).where(Users.id == additional_claims['user_id'])).scalar()
+    # response_body['message'] = f'Datos del usuario {id}'
+    response_body['result'] = row.serialize()
     return response_body, 200
 
 

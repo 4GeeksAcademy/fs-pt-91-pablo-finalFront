@@ -44,20 +44,25 @@ export const Navbar = () => {
 					{'Favorites '}
 					<span className="badge position-absolute top-0 start-0 translate-middle rounded-circle bg-warning text-dark">{store.favorites.length}</span>
 				</button>
+				<button className="nav-item btn btn-primary me-4">
+					<Link to={store.isLogged ? '/settings' : '/login'} className="nav-link">
+						<span>{store.isLogged ? 'Profile' : 'Login'}</span>
+					</Link>
+				</button>
 				<div className="dropdown-menu">
 					{
 						store.favorites.length === 0
-							?
-							<span className="dropdown-item text-end">You don't have favorites</span>
-							:
-							store.favorites.map((favorite) =>
-								<div key={favorite.redirect} className="dropdown-item text-end d-flex justify-content-between align-items-center">
-									<Link className="dropdown-link" to={`./${favorite.redirect}`}>
-										{favorite.label}
-									</Link>
-									<button className="btn text-danger" onClick={() => handleRemoveFavorite(favorite.redirect)}><i className="fa-solid fa-trash"></i></button>
-								</div>
-							)
+						?
+						<span className="dropdown-item text-end">You don't have favorites</span>
+						:
+						store.favorites.map((favorite) =>
+							<div key={favorite.redirect} className="dropdown-item text-end d-flex justify-content-between align-items-center">
+								<Link className="dropdown-link" to={`./${favorite.redirect}`}>
+									{favorite.label}
+								</Link>
+								<button className="btn text-danger" onClick={() => handleRemoveFavorite(favorite.redirect)}><i className="fa-solid fa-trash"></i></button>
+							</div>
+						)
 					}
 				</div>
 			</div>

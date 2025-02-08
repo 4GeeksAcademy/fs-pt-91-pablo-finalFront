@@ -13,6 +13,9 @@ import { CharactersList } from "./pages/CharactersList.jsx";
 import { PlanetsList } from "./pages/PlanetsList.jsx";
 import { StarshipsList } from "./pages/StarshipsList.jsx";
 import { Details } from "./pages/Details.jsx";
+import { Login } from "./pages/Login.jsx";
+import { Alert } from "./component/Alert.jsx";
+import { UserDetails } from "./pages/UserDetails.jsx";
 
 //create your first component
 const Layout = () => {
@@ -26,8 +29,11 @@ const Layout = () => {
         <div>
             <BrowserRouter basename={basename}>
                 <Navbar />
+                <Alert />
                 <Routes>
                     <Route element={<Home />} path="/" />
+                    <Route element={<Login />} path="/login" />
+                    <Route element={<UserDetails />} path="/settings" />
 
                     <Route element={<CharactersList />} path="/people" />
                     <Route element={<PlanetsList />} path="/planets" />
