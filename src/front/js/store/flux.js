@@ -25,6 +25,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const data = localStorage.getItem(type);
 				setStore({ [type]: JSON.parse(data) })
 			},
+			signup: async (dataToSend) => {
+				const uri = `${process.env.BACKEND_URL}/api/users`
+				const response = await fetch(uri, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(dataToSend)
+				});
+				if(!response.ok) {
+					if (response.status === 403) {
+						setStore({ alert: { text: 'This email is already at use, try logging in or using a different email.', background: 'danger', visible: true } })
+					}
+					else {
+						setStore({ alert: { text: 'Internal error, please try again in a few minutes. If the error persists, let us know', background: 'danger', visible: true } })
+					}
+					return response;
+				}
+				const data = await response.json()
+				const loginBody = {
+					email: dataToSend.email,
+					password: dataToSend.password
+				}
+				
+				const loginData = await getActions().login(loginBody)
+				return loginData
+			},
 			login: async (dataToSend) => {
 				const uri = `${process.env.BACKEND_URL}/api/login`
 				setStore({ alert: { text: '', background: '', visible: false } })

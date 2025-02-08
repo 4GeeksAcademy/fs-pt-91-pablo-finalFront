@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Context } from '../store/appContext';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export const Login = () => {
 
@@ -37,6 +38,7 @@ export const Login = () => {
                     <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control bg-dark text-white" id="floatingPassword" placeholder="Password" />
                 </div>
                 <button className="btn btn-primary w-100 py-2 mt-4" type="submit">Sign in</button>
+                <p className='mt-3 text-center'>Don't have an account? <Link to='/signup'>Sign up</Link></p>
             </form>
         </div>
     );

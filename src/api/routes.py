@@ -7,7 +7,7 @@ from flask_cors import CORS
 from api.utils import generate_sitemap, APIException
 from api.models import db, Users, Posts, Medias, Comments, Followers, Characters, Planets, CharacterFavorites, PlanetFavorites
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, jwt_required
-
+from sqlalchemy.exc import IntegrityError
 
 api = Blueprint('api', __name__)
 CORS(api)  # Allow CORS requests to this API
@@ -56,13 +56,36 @@ def protected():
     return response_body, 200
 
 
-@api.route('/users', methods=['GET'])
+@api.route('/users', methods=['GET', 'POST'])
 def users():
     response_body = {}
-    rows = db.session.execute(db.select(Users)).scalars()
-    response_body['message'] = 'Listado de usuarios'
-    response_body['results'] = [row.serialize() for row in rows]
-    return response_body, 200
+    if request.method == 'GET':
+        rows = db.session.execute(db.select(Users)).scalars()
+        response_body['message'] = 'Listado de usuarios'
+        response_body['results'] = [row.serialize() for row in rows]
+        return response_body, 200
+    if request.method == 'POST':
+        data = request.json
+        user = Users(
+            first_name = data.get('first_name'),
+            email = data.get('email'),
+            password = data.get('password'),
+            phone = data.get('phone'),
+            is_active = True
+        )
+        db.session.add(user)
+        try:
+            db.session.commit()
+            response_body['message'] = 'Usuario creado correctamente'
+            response_body['results'] = user.serialize()
+            return response_body, 201
+        except IntegrityError as err:
+            if 'duplicate key value violates unique constraint "users_email_key"' in str(err):
+                response_body['message'] = 'Correo ya existente'
+                return response_body, 403
+            else:
+                response_body['message'] = 'Error del servidor'
+                return response_body, 500
 
 
 @api.route('/users/<int:id>', methods=['GET'])
