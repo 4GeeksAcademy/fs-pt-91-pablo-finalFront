@@ -1,6 +1,9 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+			user: {},
+			isLogged: false,
+			alert: {text: '', background: '', visible: false},
 			contacts: [],
 			people: [],
 			planets: [],
@@ -21,6 +24,48 @@ const getState = ({ getStore, getActions, setStore }) => {
 			setFromLocalStorage: (type) => {
 				const data = localStorage.getItem(type);
 				setStore({ [type]: JSON.parse(data) })
+			},
+			login: async (dataToSend) => {
+				const uri = `${process.env.BACKEND_URL}/api/login`
+				setStore({ alert: { text: '', background: '', visible: false } })
+				const response = await fetch(uri, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(dataToSend)
+				})
+				if(!response.ok) {
+					setStore({ alert: { text: 'Usuario o contraseña incorrectos', background: 'danger', visible: true } })
+					return;
+				}
+				const data = await response.json()
+				localStorage.setItem('accessToken', data.access_token)
+				setStore({ 
+					isLogged: true, 
+					user: data.result 
+				})
+				return response
+			},
+			logout: () => {
+				localStorage.clear()
+				setStore({ user: {}, isLogged: false })
+			},
+			getUser: async(id) => {
+				const uri = `${process.env.BACKEND_URL}/api/users/${id}`;
+				const response = await fetch(uri, {
+					method: 'GET',
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+					}
+				});
+
+				if (!response.ok) {
+					return;
+				}
+
+				const data = await response.json()
+				return data.result;
 			},
 			contactApi: {
 				getContactList: async() => {
